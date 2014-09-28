@@ -75,14 +75,10 @@ public class AceScalaEditorDemo extends UI {
 		executeButtons.addClickListener(new ClickListener() {
 			@Override
 			public void buttonClick(final ClickEvent event) {
-				try {
-					final Object result = scriptEngine.eval(editor.getValue());
-					ta.setValue(result.toString());
-				} catch (final Throwable e) {
-					ta.setValue(stackTraceAsString(e));
-				}
+				handleExecution(ta);
 			}
 		});
+		executeButtons.setWidth("100%");
 		layout.addComponent(executeButtons);
 
 		ta.setWidth("100%");
@@ -104,6 +100,15 @@ public class AceScalaEditorDemo extends UI {
 
           final String stacktraceAsString = new String(bout.toByteArray());
 		return stacktraceAsString;
+	}
+
+	private void handleExecution(final TextArea ta) {
+		try {
+			final Object result = scriptEngine.eval(editor.getValue());
+			ta.setValue(result.toString());
+		} catch (final Throwable e) {
+			ta.setValue(stackTraceAsString(e));
+		}
 	}
 
 }
