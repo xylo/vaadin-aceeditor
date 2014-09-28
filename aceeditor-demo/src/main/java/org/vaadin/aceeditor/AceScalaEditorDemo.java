@@ -52,13 +52,16 @@ public class AceScalaEditorDemo extends UI {
 		split.setSplitPosition(70f);
 
 		split.setFirstComponent(editor);
+		split.setHeight("100%");
 
 		editor.setSizeFull();
 		editor.setMode(AceMode.scala);
 
 		final VerticalLayout valueLayout = new VerticalLayout();
-		valueLayout.setMargin(true);
-		valueLayout.addComponent(createValueTextArea());
+		valueLayout.setMargin(false);
+		final Component resultComponent = createValueTextArea();
+		resultComponent.setHeight("100%");
+		valueLayout.addComponent(resultComponent);
 
 		split.setSecondComponent(valueLayout);
 
@@ -83,6 +86,7 @@ public class AceScalaEditorDemo extends UI {
 
 		ta.setWidth("100%");
 		ta.setHeight("100%");
+		ta.setRows(10);
 
 		layout.addComponent(ta);
 
