@@ -2,3 +2,10 @@
 .settings
 .classpath
 *.swp
+target
+src/main/webapp/VAADIN/gwt-unitCache*
+src/main/webapp/VAADIN/widgetsets*
+aceeditor-demo/src/main/webapp/VAADIN/widgetsets*
+aceeditor-demo/src/main/webapp/VAADIN/gwt-unitCache*
+.externalToolBuilders
+.cache
