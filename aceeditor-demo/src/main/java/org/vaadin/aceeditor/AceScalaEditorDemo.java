@@ -82,6 +82,10 @@ public class AceScalaEditorDemo extends UI {
 			}
 		});
 		executeButtons.setWidth("100%");
+
+		// executeButtons.addShortcutListener(new AbstractField.FocusShortcut(
+		// executeButtons, KeyCode.E, ModifierKey.CTRL));
+
 		layout.addComponent(executeButtons);
 
 		ta.setWidth("100%");
@@ -90,7 +94,7 @@ public class AceScalaEditorDemo extends UI {
 
 		layout.addComponent(ta);
 
-		return new Panel("Value", layout);
+		return new Panel(layout);
 	}
 
 	private String stackTraceAsString(final Throwable e) {
