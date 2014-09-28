@@ -12,7 +12,7 @@
         <init-param>
             <description>Vaadin UI to display</description>
             <param-name>UI</param-name>
-            <param-value>org.vaadin.aceeditor.AceEditorDemo</param-value>
+            <param-value>org.vaadin.aceeditor.AceScalaEditorDemo</param-value>
         </init-param>
                 <init-param>
             <description>Application widgetset</description>
