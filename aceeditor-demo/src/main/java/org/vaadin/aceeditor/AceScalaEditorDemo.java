@@ -1,26 +1,18 @@
 package org.vaadin.aceeditor;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
-
-import javax.script.ScriptEngine;
-
 import com.vaadin.annotations.PreserveOnRefresh;
 import com.vaadin.annotations.StyleSheet;
 import com.vaadin.annotations.Theme;
+import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.TextArea;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.VerticalSplitPanel;
-
+import com.vaadin.ui.*;
 import de.digitalculture.scalaeval.ScalaScriptEngine;
+
+import javax.script.ScriptEngine;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.util.Scanner;
 
 
 @Theme("reindeer")
@@ -29,84 +21,68 @@ import de.digitalculture.scalaeval.ScalaScriptEngine;
 @PreserveOnRefresh
 public class AceScalaEditorDemo extends UI {
 
-  //private final ScriptEngineManager scriptEngineManager = new ScriptEngineManager();
-  private final ScriptEngine scriptEngine = new ScalaScriptEngine();
-  private final AceEditor editor = new AceEditor();
-
-	public AceScalaEditorDemo() {
-		final String s = "val l = List(1,2,3,4,5)\n"
-				+ "l.filter(_ % 2 == 0)\n";
-
-		editor.setValue(s);
-
-		editor.focus();
-
-	}
+	//private final ScriptEngineManager scriptEngineManager = new ScriptEngineManager();
+	private final ScriptEngine scriptEngine = new ScalaScriptEngine();
+	private final AceEditor editor = new AceEditor();
 
 	@Override
 	protected void init(final VaadinRequest request) {
+		String initialEditorContent = new Scanner(AceScalaEditorDemo.class.getResourceAsStream("initialEditorContent.txt"), "UTF-8").useDelimiter("\\A").next();
 
-		final VerticalSplitPanel split = new VerticalSplitPanel();
-		split.setSizeFull();
-		setContent(split);
-		split.setSplitPosition(70f);
-
-		split.setFirstComponent(editor);
-		split.setHeight("100%");
-
+		editor.setValue(initialEditorContent);
 		editor.setSizeFull();
 		editor.setMode(AceMode.scala);
+		editor.focus();
 
-		final VerticalLayout valueLayout = new VerticalLayout();
-		valueLayout.setMargin(false);
-		final Component resultComponent = createValueTextArea();
-		resultComponent.setHeight("100%");
-		valueLayout.addComponent(resultComponent);
+		final VerticalSplitPanel split = new VerticalSplitPanel() {{
+			setSizeFull();
+			setSplitPosition(60f);
 
-		split.setSecondComponent(valueLayout);
+			setFirstComponent(editor);
+			setSecondComponent(createResultComponent());
+		}};
 
-
+		setContent(split);
 	}
 
-	private Component createValueTextArea() {
+	private Component createResultComponent() {
+		return new VerticalLayout() {{
+			setSizeFull();
 
-		final Button executeButtons = new Button("Execute");
+			final TextArea ta = new TextArea() {{
+				setSizeFull();
+				setRows(10);
+			}};
 
-		final VerticalLayout layout = new VerticalLayout();
+			final Button executeButton = new Button("Execute (Control+ENTER)") {{
+				setWidth("100%");
 
-		final TextArea ta = new TextArea();
-		executeButtons.addClickListener(new ClickListener() {
-			@Override
-			public void buttonClick(final ClickEvent event) {
-				handleExecution(ta);
-			}
-		});
-		executeButtons.setWidth("100%");
+				addClickListener(new ClickListener() {
+					@Override
+					public void buttonClick(final ClickEvent event) {
+						handleExecution(ta);
+					}
+				});
 
-		// executeButtons.addShortcutListener(new AbstractField.FocusShortcut(
-		// executeButtons, KeyCode.E, ModifierKey.CTRL));
+				setClickShortcut(ShortcutAction.KeyCode.ENTER, ShortcutAction.ModifierKey.CTRL);
+			}};
 
-		layout.addComponent(executeButtons);
-
-		ta.setWidth("100%");
-		ta.setHeight("100%");
-		ta.setRows(10);
-
-		layout.addComponent(ta);
-
-		return new Panel(layout);
+			addComponent(executeButton);
+			addComponent(ta);
+			setExpandRatio(ta, 1);
+		}};
 	}
 
 	private String stackTraceAsString(final Throwable e) {
 		e.printStackTrace();
-          final ByteArrayOutputStream bout = new ByteArrayOutputStream();
-          e.printStackTrace(new PrintStream(bout));
-          try {
-            bout.close();
-          } catch (final IOException ignored) {
-          }
+		final ByteArrayOutputStream bout = new ByteArrayOutputStream();
+		e.printStackTrace(new PrintStream(bout));
+		try {
+			bout.close();
+		} catch (final IOException ignored) {
+		}
 
-          final String stacktraceAsString = new String(bout.toByteArray());
+		final String stacktraceAsString = new String(bout.toByteArray());
 		return stacktraceAsString;
 	}
 
